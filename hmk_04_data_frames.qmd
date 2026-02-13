@@ -1,0 +1,147 @@
+---
+Name: Spencer Day 
+title: "Homework 04: Data frames and data wrangling"
+format: html
+editor: visual
+---
+
+Please read the entire chapter on data transformation from\
+[R for Data Science](https://r4ds.hadley.nz/data-transform) before starting this homework.
+
+This homework relies on the `nycflights13` package, which contains several data frames, including:
+
+-   `airlines`
+-   `airports`
+-   `flights`
+-   `planes`
+-   `weather`
+
+Loading `nycflights13` puts these data frames on the search path.
+
+------------------------------------------------------------------------
+
+## Setup
+
+### Load packages (do this every time)
+
+```{r}
+library(tidyverse)
+library(nycflights13)
+```
+
+Note - if you don't have these installed you will need to first install.packages('nycflights13')
+
+------------------------------------------------------------------------
+
+# Question 1: Filtering
+
+Make a plot of **air time vs distance** (air time on the y-axis, distance on the x-axis) for all flights that meet the following criteria:
+
+-   originate from LaGuardia airport (`"LGA"`)
+-   departed on the 16th of the month
+-   have a flight distance of less than 2000 miles
+
+## Your code
+
+```{r} q1_flights <- flights %>%}
+   filter(origin == "LGA",
+          day == 16,
+          distance < 2000)
+ 
+ ggplot(q1_flights, aes(x = distance, y = air_time)) +
+   geom_point(alpha = 0.3) +
+   labs(title = "Air Time vs Distance (LGA, Day 16, <2000 miles)",
+        x = "Distance (miles)",
+        y = "Air Time (minutes)")
+ 
+# Filter flights according to the criteria above,
+# then make the required plot.
+```
+
+## Brief written response
+
+In 2–4 sentences, describe what you observe in the plot. (For example: Is the relationship roughly linear? Are there any clear outliers?)
+
+**Your answer here:**#this plot shows that the distance and air time are linear longer flights correlate #with taking more time there is some vertical spread which could be because of different factors like weather.
+
+------------------------------------------------------------------------
+
+# Question 2: Dealing with NAs
+
+Make a data frame of all rows of `flights` that have values for *both* `arr_time` and `dep_time` (i.e., neither value is `NA`).
+
+## Your code
+
+```{r}flights_no_na <- flights %>%}
+   filter(!is.na(arr_time), !is.na(dep_time))
+# Create a new data frame that removes rows where arr_time or dep_time is NA.
+
+```
+
+## Filtering NAs (conceptual)
+
+`ggplot()` will automatically remove `NA` values from a plot, but it emits a warning message about it. You *could* silence warnings using chunk options, but instead:
+
+### Brief written response
+
+Explain (in words) how you could prevent those `NA` values from appearing in the plot in the first place.
+
+**Your answer here:** to prevent NA values from appearing in th eplot you could filter the datat #using filter(!is.na(variable)). this removes them before ggplot so it does not need to #automatically drop so there is not warning.
+
+------------------------------------------------------------------------
+
+# Question 3: Adding columns
+
+Create a data frame of **average flight speeds**, based on `air_time` and `distance`.
+
+Then make either:
+
+-   a histogram, **or**
+-   a density plot
+
+If you like, you may break the data out (e.g., by airline or another variable) in a way that you think makes sense.
+
+## Your code
+
+```{r} speed_df <- flights %>%}
+   filter(!is.na(air_time), air_time > 0) %>%
+   mutate(speed = distance / (air_time / 60))
+ 
+ ggplot(speed_df, aes(x = speed)) +
+   geom_histogram(bins = 50, fill = "steelblue", color = "white") +
+   labs(title = "Distribution of Flight Speeds",
+        x = "Average Speed (mph)",
+        y = "Count")
+ 
+# Create a new column for average speed.
+# (Hint: think carefully about units — air_time is in minutes.)
+# Then make a histogram or density plot.
+
+```
+
+## Brief written response
+
+Describe the main features of your speed distribution.
+
+**Your answer here:**The speed distribution is bell shaped and the center is what a typical cruising speed would be. This also shows its more likely for the plane to go faster than cruising speed than slower.
+
+------------------------------------------------------------------------
+
+# Rendering and submission (GitHub)
+
+Canvas contains the course GitHub link and instructions for **forking** the course repository.
+
+In this file, your job is to:
+
+1.  Complete the homework by adding code + written responses above.
+2.  Render this Quarto file to **HTML or PDF**.
+3.  Move the rendered file(s) to the /doc folder (note that, if you render to html you will also have to move your hmk_04_data_frames_files folder)
+4.  Add/commit both:
+    -   this edited `.qmd` file
+    -   the rendered output file(s) (HTML or PDF)
+5.  Push your changes to your fork on GitHub.
+6.  Open a Pull Request back to the course repository.
+
+## What to submit on Canvas
+
+On Canvas, submit a link to your GitHub fork repository (not files).
