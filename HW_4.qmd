@@ -1,0 +1,67 @@
+---
+title: "week_4.qtr"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+```{r}
+# Load packages
+library(tidyverse)
+library(conflicted)
+library(nycflights13)
+
+# Set preference BEFORE using filter()
+conflicts_prefer(dplyr::filter)
+
+# Now run safely
+filter(mtcars, cyl == 8)
+         
+```
+
+#Q1
+
+```{r}
+ q1_flights <- flights %>%
+   filter(origin == "LGA",
+          day == 16,
+          distance < 2000)
+ 
+ ggplot(q1_flights, aes(x = distance, y = air_time)) +
+   geom_point(alpha = 0.3) +
+   labs(title = "Air Time vs Distance (LGA, Day 16, <2000 miles)",
+        x = "Distance (miles)",
+        y = "Air Time (minutes)")
+ 
+   
+```
+
+#written response #this plot shows that the distance and air time are linear longer flights correlate #with taking more time there is some vertical spread which could be because of different factors like weather.
+
+#Q2
+
+```{r}
+flights_no_na <- flights %>%
+   filter(!is.na(arr_time), !is.na(dep_time))
+```
+
+##written: to prevent NA values from appearing in th eplot you could filter the datat #using filter(!is.na(variable)). this removes them before ggplot so it does not need to #automatically drop so there is not warning.
+
+#q3
+
+```{r}
+speed_df <- flights %>%
+   filter(!is.na(air_time), air_time > 0) %>%
+   mutate(speed = distance / (air_time / 60))
+ 
+ ggplot(speed_df, aes(x = speed)) +
+   geom_histogram(bins = 50, fill = "steelblue", color = "white") +
+   labs(title = "Distribution of Flight Speeds",
+        x = "Average Speed (mph)",
+        y = "Count")
+```
+
+##written: The speed distribution is bell shaped and the center is what a typical cruising speed would be. This also shows its more likely for the plane to go faster than cruising speed than slower.
